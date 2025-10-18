@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <!-- Обновили заголовок страницы на поздравление Олегу -->
+  <title>Поздравление Олегу! 🎂</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;800&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold: #ffd700;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+      color: #fff;
+    }
+    @keyframes gradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+
+    /* Салют (под всем контентом) */
+    #fireworksCanvas{
+      position:fixed; inset:0; width:100%; height:100%;
+      pointer-events:none; z-index:2; opacity:.9;
+    }
+
+    /* Звезды и эмодзи (ещё ниже) */
+    .stars{ position:fixed; inset:0; pointer-events:none; z-index:0; }
+    .star{ position:absolute; background:#fff; border-radius:50%; animation:twinkle 3s infinite; }
+    @keyframes twinkle{ 0%,100%{opacity:0; transform:scale(1)} 50%{opacity:1; transform:scale(1.2)} }
+
+    .floating-elements{ position:fixed; inset:0; pointer-events:none; z-index:1; }
+    .floating-emoji{ position:absolute; font-size:30px; animation:floatUp 15s infinite; opacity:.9; filter: drop-shadow(0 0 6px rgba(0,0,0,.4)); }
+    @keyframes floatUp{
+      0%{ bottom:-100px; transform:translateX(0) rotate(0deg) }
+      100%{ bottom:calc(100% + 100px); transform:translateX(120px) rotate(360deg) }
+    }
+
+    /* Контейнер */
+    .container{
+      position:relative; z-index:10; min-height:100vh;
+      display:flex; align-items:center; justify-content:center; padding:20px;
+    }
+
+    /* Карточка — максимально прозрачная */
+    .birthday-card{
+      width:min(920px,100%);
+      background: rgba(255,255,255,0.02);          /* почти воздух */
+      backdrop-filter: blur(6px);                  /* лёгкое стекло */
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      padding: 34px 22px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.25), inset 0 0 20px rgba(255,255,255,.03);
+      transform: translateY(16px);
+      opacity: 0;
+      animation: slideUp .9s ease-out .4s forwards;
+      position: relative;
+      overflow: hidden;
+    }
+    @keyframes slideUp{ to{ transform:translateY(0); opacity:1 } }
+
+    .birthday-card::before{
+      content:'';
+      position:absolute; inset:-2px; border-radius:28px; padding:2px;
+      background:linear-gradient(45deg,#FFD700,#FF69B4,#00CED1,#FF6347,#98FB98,#FFD700);
+      background-size:300% 300%;
+      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor; mask-composite:exclude;
+      animation:borderAnim 3s linear infinite; opacity:.35;
+    }
+    @keyframes borderAnim{ 0%{background-position:0% 50%} 100%{background-position:100% 50%} }
+
+    .header{ text-align:center; margin-bottom:24px; }
+    .badge{
+      display:inline-flex; gap:10px; padding:8px 18px;
+      background:linear-gradient(135deg,var(--gold),#ffa500);
+      border-radius:999px; font-weight:800; font-size:12.5px; letter-spacing:1.3px;
+      color:#1a1a2e; box-shadow:0 5px 18px rgba(255,215,0,.35);
+      opacity:.95;
+    }
+    .main-title{
+      margin:10px 0 6px;
+      font-family:'Montserrat',sans-serif; font-size:clamp(2.2rem,6vw,4rem); font-weight:900; line-height:1.05;
+      background:linear-gradient(45deg,#FFD700,#FFA500,#FF6347,#FF1493,#00CED1,#FFD700);
+      background-size:200% 200%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+      animation:titleGradient 3s ease-in-out infinite;
+      filter: drop-shadow(0 2px 10px rgba(0,0,0,.45));
+    }
+    @keyframes titleGradient{ 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+    .subtitle{ font-size:1.12rem; color:rgba(255,255,255,.92); font-weight:700; letter-spacing:.6px; }
+
+    /* Аватар */
+    .avatar-section{ display:flex; justify-content:center; margin:22px 0 26px; }
+    .avatar{
+      width:170px; height:170px; border-radius:50%; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;
+      background:rgba(255,255,255,.06);
+      box-shadow: 0 0 40px rgba(255,255,255,.08);
+      animation:float 4s ease-in-out infinite;
+    }
+    .avatar::before{
+      content:""; position:absolute; inset:-3px; border-radius:50%; padding:3px;
+      background:linear-gradient(45deg,#ffd700,#ff6b6b,#4ecdc4,#ffd700);
+      -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite:xor; mask-composite:exclude; animation:rotate 3s linear infinite; opacity:.6;
+    }
+    @keyframes float{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    @keyframes rotate{ to{ transform:rotate(360deg) } }
+    .avatar .initials{ font-size:3.2rem; font-weight:800; color:#fff; text-shadow:0 2px 10px rgba(0,0,0,.35); }
+
+    /* Печатающийся текст — без панелей */
+    .typewriter-container{
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 16px;
+      margin: 10px 0 6px;
+      min-height: 96px;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .typewriter{ font-size:1.18rem; font-weight:800; color:#ffeb3b; text-align:center; text-shadow:0 0 16px rgba(255,235,59,.55); line-height:1.6; }
+    .cursor{ display:inline-block; width:2px; height:1.3em; background:#ffeb3b; margin-left:4px; animation:blink 1s infinite; vertical-align:text-bottom; }
+    @keyframes blink{ 0%,50%{opacity:1} 51%,100%{opacity:0} }
+    .wrong{ color:#ff4757; text-decoration:line-through; text-decoration-thickness:2px; opacity:.95; }
+
+    /* Карточки сообщений — тоже почти воздух */
+    .message-cards{ display:grid; gap:14px; margin:18px 0 8px; }
+    .message-card{
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 16px;
+      padding: 18px 16px;
+      backdrop-filter: blur(4px);
+      position: relative; overflow: hidden; opacity: 0; animation: slideIn .55s ease-out forwards;
+    }
+    .message-card:nth-child(1){ animation-delay:.45s } 
+    .message-card:nth-child(2){ animation-delay:.6s }
+    .message-card:nth-child(3){ animation-delay:.75s } 
+    .message-card:nth-child(4){ animation-delay:.9s }
+    @keyframes slideIn{ from{opacity:0; transform:translateX(-26px)} to{opacity:1; transform:translateX(0)} }
+    .message{ font-size:1.05rem; line-height:1.75; color:rgba(255,255,255,.98); text-align:center; text-shadow:0 1px 4px rgba(0,0,0,.35); }
+    .highlight{ color:var(--gold); font-weight:900; text-shadow:0 0 20px rgba(255,215,0,.5); }
+
+    .signature{ text-align:center; font-size:1.1rem; font-weight:900; color:#ffd700; margin-top:16px; text-shadow:0 0 18px rgba(255,215,0,.55); }
+    .footer{ margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,.15); display:flex; justify-content:space-between; align-items:center; gap:12px; opacity:.95; }
+    .team{ font-weight:800; font-size:15px; color:var(--gold); display:flex; align-items:center; gap:8px; }
+    .date{ color:rgba(255,255,255,.85); font-size:14px; }
+
+    /* Кнопка салюта */
+    .action-buttons{ display:flex; justify-content:center; margin-top:14px; }
+    .fireworks-btn{
+      padding:12px 26px; color:#fff; border:none; border-radius:999px; font-size:1rem; font-weight:800; cursor:pointer; transition:all .25s ease;
+      background:linear-gradient(135deg,#ff6b6b,#ff8787); box-shadow:0 10px 26px rgba(255,107,107,.32);
+      position:relative;
+    }
+    .fireworks-btn:hover{ transform:translateY(-2px); box-shadow:0 14px 34px rgba(255,107,107,.42) }
+
+    /* Дополнительные стили для бегущей кнопки */
+    .fireworks-btn.runaway{
+      position:fixed;
+      z-index:1000;
+      /* убрать transition для плавного перемещения */
+      transition:none;
+    }
+    .fireworks-btn.runaway::before,
+    .fireworks-btn.runaway::after{
+      content:'';
+      position:absolute;
+      bottom:-10px;
+      width:6px;
+      height:18px;
+      background:#fff;
+      border-radius:3px;
+      animation:walkLeg .35s infinite alternate ease-in-out;
+    }
+    .fireworks-btn.runaway::before{ left:30%; }
+    .fireworks-btn.runaway::after{ right:30%; animation-delay:.15s; }
+    @keyframes walkLeg{
+      0%{ transform:rotate(15deg) translateY(0); }
+      100%{ transform:rotate(-15deg) translateY(2px); }
+    }
+
+    /* Адаптив */
+    @media (max-width:768px){
+      .birthday-card{ padding:24px 16px }
+      .main-title{ font-size:2rem }
+      .avatar{ width:140px; height:140px }
+      .avatar .initials{ font-size:2.4rem }
+      .typewriter{ font-size:1.02rem }
+      .message{ font-size:.98rem }
+    }
+
+    /* Невидимый слой для разблокировки звука (снимается после первого жеста) */
+    #unmuteOverlay{ position:fixed; inset:0; z-index:999; background:transparent; }
+  </style>
+</head>
+<body>
+  <!-- Canvas салюта -->
+  <canvas id="fireworksCanvas"></canvas>
+
+  <!-- Звёзды -->
+  <div class="stars" id="stars"></div>
+
+  <!-- Парящие эмодзи -->
+  <div class="floating-elements" id="floatingElements"></div>
+
+  <!-- Музыка: автозапуск; unmute — сразу или при первом жесте -->
+  <!-- Основной трек -->
+  <audio id="backgroundMusic" autoplay playsinline loop muted>
+    <source src="./music.mp3" type="audio/mpeg">
+    <source src="./music.ogg" type="audio/ogg">
+    <source src="./music.wav" type="audio/wav">
+  </audio>
+  <!-- Альтернативный трек, который включается когда нажимаем кнопку -->
+  <audio id="alternateMusic" playsinline loop muted>
+    <source src="./Music.mp3" type="audio/mpeg">
+    <source src="./Music.ogg" type="audio/ogg">
+    <source src="./Music.wav" type="audio/wav">
+  </audio>
+
+  <!-- Невидимый оверлей для первого жеста (потом удалится автоматически) -->
+  <div id="unmuteOverlay" title=""></div>
+
+  <div class="container">
+    <div class="birthday-card">
+      <div class="header">
+        <!-- Значок клуба и заголовок поздравления -->
+        <div class="badge">⭐ БРАТСКИЙ КЛУБ ОЛЕГА ⭐</div>
+        <h1 class="main-title">С&nbsp;Днём&nbsp;Рождения,&nbsp;Олег! 🎉</h1>
+        <p class="subtitle">«Ты&nbsp;—&nbsp;наша&nbsp;гордость» 🥇</p>
+      </div>
+
+      <div class="avatar-section">
+        <!-- Изменили инициал на "О" для Олега -->
+        <div class="avatar" id="avatar"><span class="initials">О</span></div>
+      </div>
+
+      <div class="typewriter-container">
+        <div class="typewriter">
+          <span id="typewriter-text"></span><span class="cursor"></span>
+        </div>
+      </div>
+
+      <div class="message-cards">
+        <!-- Заменили карточки сообщений на истории про Олега -->
+        <div class="message-card"><div class="message">
+          Если задача сложная — у&nbsp;Олега всегда найдётся <span class="highlight">солдатская смекалка</span>. Стоит ему взглянуть — и&nbsp;всё становится ясным.
+        </div></div>
+
+        <div class="message-card"><div class="message">
+          Полоса препятствий у&nbsp;Олега — как газон: ровная и&nbsp;гладкая. <span class="highlight">Строительный уровень</span> приходит за автографом.
+        </div></div>
+
+        <div class="message-card"><div class="message">
+          Его BMW узнаёт своего хозяина по&nbsp;шагам и&nbsp;заводится без ключа. Наташа иногда ревнует, но понимает:&nbsp;<span class="highlight">машина&nbsp;— это&nbsp;святое</span>.
+        </div></div>
+
+        <div class="message-card"><div class="message">
+          Брат, жми на&nbsp;газ&nbsp;— будет салют. <span class="highlight">С&nbsp;Днём&nbsp;Рождения!</span> 🎆
+        </div></div>
+      </div>
+
+      <!-- Подпись изменилась: поздравление от брата -->
+      <div class="signature">От&nbsp;брата</div>
+
+      <div class="footer">
+        <div class="team"><span>💪</span><span>Твои&nbsp;братья&nbsp;по&nbsp;спорту</span></div>
+        <div class="date" id="date"></div>
+      </div>
+
+      <div class="action-buttons">
+        <!-- Изменили кнопку: убрали атрибут onclick и добавили id для скрипта -->
+        <button class="fireworks-btn" id="runawayBtn">🎆 Жми, брат!</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* -------- ЗВЁЗДНОЕ НЕБО -------- */
+(function () {
+  const starsContainer = document.getElementById('stars');
+  const starCount = 120;
+  for (let i = 0; i < starCount; i++) {
+    const d = document.createElement('div');
+    d.className = 'star';
+    d.style.width = d.style.height = (Math.random() * 3 + 1) + 'px';
+    d.style.left = Math.random() * 100 + '%';
+    d.style.top  = Math.random() * 100 + '%';
+    d.style.animationDelay = Math.random() * 3 + 's';
+    d.style.animationDuration = (Math.random() * 3 + 2) + 's';
+    starsContainer.appendChild(d);
+  }
+})();
+
+/* -------- ПАРЯЩИЕ ЭМОДЗИ -------- */
+(function () {
+  const container = document.getElementById('floatingElements');
+  const emojis = ['🎈','🎉','✨','🌟','💫','🍖','🔥','🪴','🌲','🧹','🛠️','💪','😎','🚗','💃'];
+  const count = 18;
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'floating-emoji';
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.left = Math.random() * 100 + '%';
+    el.style.animationDelay = Math.random() * 15 + 's';
+    el.style.animationDuration = (15 + Math.random() * 10) + 's';
+    container.appendChild(el);
+  }
+})();
+
+/* -------- ДАТА -------- */
+document.getElementById('date').textContent = new Date().toLocaleDateString('ru-RU', {year:'numeric', month:'long', day:'numeric'});
+
+/* -------- АВАТАР (ищем фото Санька рядом со страницей) -------- */
+(function () {
+  const avatar = document.getElementById('avatar');
+  const initials = avatar.querySelector('.initials');
+  const imageUrls = [
+    // Подставляем имена файлов для фотографий Олега
+    './oleg.jpg','./oleg.JPG','./oleg.jpeg','./oleg.JPEG',
+    './oleg.png','./oleg.webp','./drone.jpg','./bmw.jpg',
+    './photo.jpg','./avatar.jpg'
+  ];
+  let i = 0;
+  function tryLoad() {
+    if (i >= imageUrls.length) return;
+    const img = new Image();
+    img.onload = () => {
+      initials.style.display = 'none';
+      Object.assign(img.style, {position:'absolute', width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%'});
+      avatar.appendChild(img);
+    };
+    img.onerror = () => { i++; tryLoad(); };
+    img.src = imageUrls[i];
+  }
+  setTimeout(tryLoad, 80);
+})();
+
+/* -------- ПЕЧАТАЮЩИЙСЯ ТЕКСТ (с «исправлением слова») -------- */
+(function () {
+  const el = document.getElementById('typewriter-text');
+  // Массив фраз для печатающегося текста, адаптированный под поздравление Олегу
+  const phrases = [
+    ["Вспоминаю день рождения: ", "никогда", "в последний момент", " — но твоя дружба вечна. 🎈"],
+    ["Чинно сидит в кабинете: ", "лежу на диване", "бегаю по армейскому полигону", " — солдат тренируется всегда. 🪖"],
+    ["Личный транспорт: ", "жигули", "BMW", " — любит её сильнее жены, хе‑хе. 🚗"],
+    ["Семейный зал: ", "телевизор", "спортзал", " — два сына и папа — настоящая команда. 🏋️‍♂️"],
+    ["Наташа: ", "сердится", "понимает", " — что Бэха иногда побеждает. 😄"],
+    ["Воспоминания: ", "вчерашний день", "школьная парта", " — с детства вместе, брат. 🎒"],
+    ["Поздравление: ", "завтра", "сегодня", " — с Днём Рождения, Олег! 🎂"],
+    ["Пожелание: ", "ничего", "победы и здоровья", " — будь счастлив, дорогой брат! 💥"],
+  ];
+
+  const typeDelay = 55, eraseDelay = 38, pauseBeforeErase = 900, pauseAfterPhrase = 1600;
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  async function type(text, start=0){ for(let i=start;i<text.length;i++){ el.textContent = text.slice(0,i+1); await sleep(typeDelay); } }
+  function markWrong(prefix, wrong){ el.innerHTML = `${prefix}<span class="wrong" id="wrong">${wrong}</span>`; }
+  async function eraseWrong(){
+    const s = document.getElementById('wrong'); if(!s) return;
+    for(let i=s.textContent.length;i>0;i--){ s.textContent = s.textContent.slice(0,i-1); await sleep(eraseDelay); }
+    s.remove();
+  }
+  async function show([pre, wrong, right, suf]){
+    el.textContent=''; await type(pre + wrong); await sleep(pauseBeforeErase);
+    markWrong(pre, wrong); await sleep(300); await eraseWrong();
+    await type(pre + right); await type(pre + right + suf, (pre + right).length); await sleep(pauseAfterPhrase);
+  }
+
+  (async function loop(){ let i=0; for(;;){ await show(phrases[i%phrases.length]); i++; } })();
+})();
+
+/* -------- САЛЮТ -------- */
+const canvas = document.getElementById('fireworksCanvas');
+const ctx = canvas.getContext('2d', { alpha: true });
+let fireworks = [], particles = [];
+
+function resizeCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+resizeCanvas(); addEventListener('resize', resizeCanvas);
+
+class Particle{
+  constructor(x,y,color,velocity,size=2){ this.x=x; this.y=y; this.color=color; this.velocity=velocity; this.size=size; this.opacity=1; this.decay=Math.random()*0.02+0.005; this.gravity=0.05; }
+  update(){ this.x+=this.velocity.x; this.y+=this.velocity.y; this.velocity.y+=this.gravity; this.velocity.x*=0.99; this.opacity-=this.decay; }
+  draw(){ ctx.save(); ctx.globalAlpha=this.opacity; ctx.fillStyle=this.color; ctx.shadowBlur=10; ctx.shadowColor=this.color; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); ctx.restore(); }
+}
+class Firework{
+  constructor(sx,sy,tx,ty){
+    this.x=sx; this.y=sy; this.sx=sx; this.sy=sy; this.tx=tx; this.ty=ty;
+    this.distanceToTarget=Math.hypot(tx-sx,ty-sy); this.distanceTraveled=0; this.trail=[];
+    this.trailLength=10; this.angle=Math.atan2(ty-sy,tx-sx); this.speed=2; this.acceleration=1.05;
+    this.color=`hsl(${Math.random()*360},100%,50%)`;
+  }
+  update(i){
+    this.trail.push({x:this.x,y:this.y}); if(this.trail.length>this.trailLength) this.trail.shift();
+    this.speed*=this.acceleration; const vx=Math.cos(this.angle)*this.speed, vy=Math.sin(this.angle)*this.speed;
+    this.distanceTraveled=Math.hypot(this.x+vx-this.sx,this.y+vy-this.sy);
+    if(this.distanceTraveled>=this.distanceToTarget){ createParticles(this.tx,this.ty); fireworks.splice(i,1); }
+    else{ this.x+=vx; this.y+=vy; }
+  }
+  draw(){
+    ctx.strokeStyle=this.color; ctx.lineWidth=2;
+    for(let i=0;i<this.trail.length;i++){ ctx.save(); ctx.globalAlpha=i/this.trail.length; ctx.beginPath(); ctx.arc(this.trail[i].x,this.trail[i].y,1,0,Math.PI*2); ctx.fill(); ctx.restore(); }
+    ctx.save(); ctx.fillStyle=this.color; ctx.shadowBlur=20; ctx.shadowColor=this.color; ctx.beginPath(); ctx.arc(this.x,this.y,3,0,Math.PI*2); ctx.fill(); ctx.restore();
+  }
+}
+function createParticles(x,y){
+  const count=90+Math.floor(Math.random()*30), hue=Math.random()*360;
+  for(let i=0;i<count;i++){
+    const angle=(Math.PI*2/count)*i, v=Math.random()*3+2;
+    const color=`hsl(${hue+Math.random()*60-30},100%,${50+Math.random()*20}%)`;
+    particles.push(new Particle(x,y,color,{x:Math.cos(angle)*v*(0.5+Math.random()), y:Math.sin(angle)*v*(0.5+Math.random())}, Math.random()*2+1));
+  }
+  for(let i=0;i<20;i++){
+    const angle=Math.random()*Math.PI*2, v=Math.random()*2;
+    particles.push(new Particle(x,y,'#fff',{x:Math.cos(angle)*v,y:Math.sin(angle)*v}, Math.random()+0.5));
+  }
+}
+function launchFireworks(){
+  for(let i=0;i<5;i++){
+    setTimeout(()=>{ fireworks.push(new Firework(Math.random()*canvas.width, canvas.height, Math.random()*canvas.width, Math.random()*canvas.height*0.5)); }, i*200);
+  }
+}
+setInterval(()=>{ if(Math.random()<0.05){ fireworks.push(new Firework(Math.random()*canvas.width, canvas.height, Math.random()*canvas.width, Math.random()*canvas.height*0.6+50)); } },1500);
+
+(function animate(){
+  ctx.fillStyle='rgba(0,0,0,.05)'; 
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  for(let i=fireworks.length-1;i>=0;i--){ fireworks[i].draw(); fireworks[i].update(i); }
+  for(let j=particles.length-1;j>=0;j--){ particles[j].draw(); particles[j].update(); if(particles[j].opacity<=0){ particles.splice(j,1); } }
+  requestAnimationFrame(animate);
+})();
+
+canvas.style.pointerEvents='auto';
+canvas.addEventListener('click',(e)=>{
+  fireworks.push(new Firework(Math.random()*canvas.width, canvas.height, e.clientX, e.clientY));
+});
+setTimeout(launchFireworks, 1100);
+
+/* -------- МУЗЫКА: максимально надёжный автозапуск -------- */
+const bg = document.getElementById('backgroundMusic');
+const alt = document.getElementById('alternateMusic');
+const overlay = document.getElementById('unmuteOverlay');
+
+function fadeTo(target = 0.35, ms = 1200){
+  const start = bg.volume || 0;
+  const t0 = performance.now();
+  function step(t){
+    const k = Math.min(1, (t - t0) / ms);
+    bg.volume = start + (target - start) * k;
+    if (k < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+async function tryPlayUnmute(){
+  try {
+    if (bg.paused) await bg.play(); // играет в muted
+    if (alt.paused) await alt.play(); // preload альт
+    bg.muted = false;
+    alt.muted = false;
+    // объём постепенно включается
+    bg.volume = 0;
+    alt.volume = 0;
+    fadeTo(0.35, 1600);
+    if (overlay) overlay.remove();  // получилось — убрать оверлей
+  } catch(e) {
+    // если не получилось — включим ловушку первого жеста
+    armFirstGestureUnlock();
+  }
+}
+
+function armFirstGestureUnlock(){
+  const unlock = async () => {
+    try {
+      if (bg.paused) await bg.play();
+      if (alt.paused) await alt.play();
+      bg.muted = false;
+      alt.muted = false;
+      bg.volume = 0;
+      alt.volume = 0;
+      fadeTo(0.35, 1600);
+    } catch(_) {}
+    cleanup();
+  };
+  function cleanup(){
+    ['pointerdown','touchstart','keydown','wheel','scroll'].forEach(ev => document.removeEventListener(ev, unlock, {passive:true}));
+    if (overlay) overlay.remove();
+  }
+  ['pointerdown','touchstart','keydown','wheel','scroll'].forEach(ev => document.addEventListener(ev, unlock, {passive:true, once:true}));
+}
+
+window.addEventListener('load', async () => {
+  // стартуем тихо в muted (разрешено везде)
+  try {
+    await bg.play();
+    await alt.play();
+  } catch(_) {}
+  // через тик пробуем снять mute программно
+  setTimeout(tryPlayUnmute, 400);
+});
+
+/* -------- БЕГУЩАЯ КНОПКА С НОЖКАМИ -------- */
+(() => {
+  const btn = document.getElementById('runawayBtn');
+  if (!btn) return;
+  let running = false;
+  let pressing = false;
+  let speed = 100; // пикселей в секунду
+  const minSpeed = 80;
+  const maxSpeed = 800;
+  let vx = 0, vy = 0;
+  let lastTime = 0;
+
+  function randomDirection(){
+    const angle = Math.random() * Math.PI * 2;
+    vx = Math.cos(angle);
+    vy = Math.sin(angle);
+  }
+  function startRunaway(){
+    if (running) return;
+    running = true;
+    btn.classList.add('runaway');
+    // перевести кнопку в фиксированное положение от текущих координат
+    const rect = btn.getBoundingClientRect();
+    btn.style.left = rect.left + 'px';
+    btn.style.top = rect.top + 'px';
+    randomDirection();
+    lastTime = performance.now();
+    requestAnimationFrame(move);
+  }
+  function move(time){
+    const dt = (time - lastTime) / 1000;
+    lastTime = time;
+    // ускоряем или замедляем скорость
+    if (pressing) {
+      speed = Math.min(maxSpeed, speed + 300 * dt);
+    } else {
+      speed = Math.max(minSpeed, speed - 120 * dt);
+    }
+    let x = parseFloat(btn.style.left);
+    let y = parseFloat(btn.style.top);
+    x += vx * speed * dt;
+    y += vy * speed * dt;
+    // отражения от стен
+    const w = btn.offsetWidth;
+    const h = btn.offsetHeight;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    if (x < 0) { x = 0; vx = Math.abs(vx); }
+    if (x + w > width) { x = width - w; vx = -Math.abs(vx); }
+    if (y < 0) { y = 0; vy = Math.abs(vy); }
+    if (y + h > height) { y = height - h; vy = -Math.abs(vy); }
+    btn.style.left = x + 'px';
+    btn.style.top = y + 'px';
+    if (running) requestAnimationFrame(move);
+  }
+  // при клике запускаем салют и бегство
+  btn.addEventListener('click', (e) => {
+    // предотвратить стандартный всплывающий клик на бегство (иначе появится повторное событие click в конце pointerup)
+    launchFireworks();
+    startRunaway();
+  });
+  // ускорение на нажатие
+  btn.addEventListener('pointerdown', (e) => {
+    pressing = true;
+    // при касании кнопки переключаем музыку
+    switchToAltMusic();
+  });
+  // прекращаем ускорение при отпускании
+  document.addEventListener('pointerup', (e) => {
+    if (pressing) {
+      pressing = false;
+      revertToBgMusic();
+    }
+  });
+  // Функции переключения музыки
+  function switchToAltMusic(){
+    try {
+      // синхронизируем громкость
+      alt.currentTime = 0;
+      alt.volume = bg.volume;
+      alt.muted = bg.muted;
+      alt.play().catch(() => {});
+      bg.pause();
+    } catch(_) {}
+  }
+  function revertToBgMusic(){
+    try {
+      bg.play().catch(() => {});
+      alt.pause();
+    } catch(_) {}
+  }
+})();
+</script>
+</body>
+</html>
